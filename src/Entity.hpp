@@ -5,9 +5,9 @@
 class Entity {
 
 public:
-  Entity(int id);
+  Entity(int id, int x, int y);
   std::shared_ptr<Shape> compShape;
   void destroy();
-  int id;
+  int m_id, m_x, m_y;
   bool isActive = true;
 };
