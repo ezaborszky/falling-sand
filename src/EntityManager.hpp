@@ -12,4 +12,7 @@ class EntityManager {
 
 public:
   EntityManager();
+  std::shared_ptr<Entity> addEntity(int id);
+  void Update();
+  void removeDead(EntityVector &vec);
 };

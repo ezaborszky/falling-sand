@@ -1,13 +1,13 @@
 #pragma once
 #include "Components.hpp"
-#include "EntityManager.hpp"
 #include <memory>
 
 class Entity {
-  friend class EntityManager;
-  Entity();
 
 public:
+  Entity(int id);
   std::shared_ptr<Shape> compShape;
   void destroy();
+  int id;
+  bool isActive = true;
 };
