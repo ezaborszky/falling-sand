@@ -1,7 +1,11 @@
 #include "game.hpp"
+#include "Components.hpp"
+#include "EntityManager.hpp"
+#include "Systems.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <memory>
 
 Game::Game() {
   m_window.create(sf::VideoMode(1280, 1024), "Sand");
@@ -9,7 +13,11 @@ Game::Game() {
 }
 
 void Game::run() {
-  sf::CircleShape myShape(33.f);
+
+  EntityManager manager;
+  auto ent = manager.addEntity(1);
+  ent->compShape = std::make_shared<Shape>(33, 5);
+  manager.Update();
   while (m_window.isOpen()) {
     sf::Event event;
 
@@ -19,8 +27,6 @@ void Game::run() {
       }
     }
 
-    m_window.clear();
-    m_window.draw(myShape);
-    m_window.display();
+    renderObjects(m_window, manager.m_entities);
   }
 }

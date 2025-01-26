@@ -7,10 +7,10 @@
 typedef std::vector<std::shared_ptr<Entity>> EntityVector;
 
 class EntityManager {
+public:
   EntityVector m_entities;
   EntityVector m_entitiesToAdd;
 
-public:
   EntityManager();
   std::shared_ptr<Entity> addEntity(int id);
   void Update();
