@@ -8,7 +8,8 @@
 #include <memory>
 const int WIDTH = 1024;
 const int HEIGHT = 1024;
-int frame = 1;
+unsigned int currentFrame = 1;
+unsigned int lastFrame = 1;
 Game::Game() {
   m_window.create(sf::VideoMode(WIDTH, HEIGHT), "Sand");
   m_window.setFramerateLimit(60);
@@ -22,15 +23,16 @@ void Game::run() {
   tMap.grid[23][23] = TileMap::SAND;
   while (m_window.isOpen()) {
     sf::Event event;
-    drawMap(100, 100, tMap.grid, manager.entMap, manager, frame);
+    drawMap(100, 100, tMap, manager.entMap, manager);
     while (m_window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         m_window.close();
       }
 
-      setCell(m_window, event, tMap.grid);
+      setCell(m_window, event, tMap);
     }
-
+    moveCells(manager.entMap, tMap, currentFrame, lastFrame);
     renderObjects(m_window, manager.entMap);
+    ++currentFrame;
   }
 }

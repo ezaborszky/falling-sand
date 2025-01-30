@@ -1,13 +1,17 @@
 #include "EntityManager.hpp"
 #include <memory>
+#include <unordered_map>
 
 EntityManager::EntityManager() {};
 
-void EntityManager::removeDead(EntityVector &vec) {
-  auto del = std::remove_if(
-      vec.begin(), vec.end(),
-      [](const std::shared_ptr<Entity> &entity) { return !entity->isActive; });
-  vec.erase(del, vec.end());
+void EntityManager::removeDead() {
+  for (auto it = entMap.begin(); it != entMap.end();) {
+    if (!it->second->isActive) {
+      it = entMap.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }
 
 // void EntityManager::Update() {

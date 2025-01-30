@@ -3,6 +3,8 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <utility>
+#include <vector>
 
 class Shape {
 public:
@@ -13,8 +15,11 @@ public:
 class TileMap {
 public:
   enum cellType { EMPTY, SAND };
-  static constexpr int WIDTH = 500;
-  static constexpr int HEIGHT = 500;
+  static constexpr int WIDTH = 100;
+  static constexpr int HEIGHT = 100;
   cellType grid[WIDTH][HEIGHT] = {cellType::EMPTY};
   TileMap();
+  std::vector<std::pair<int, int>> m_cellsToAdd;
+  std::vector<std::pair<int, int>> m_activeCells;
+  void updateCellsList(int x, int y);
 };

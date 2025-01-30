@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-typedef std::vector<std::shared_ptr<Entity>> EntityVector;
-
 template <class T1, class T2> struct hash_pair {
   std::size_t operator()(const std::pair<T1, T2> &p) const {
     auto h1 = std::hash<T1>{}(p.first);
@@ -25,5 +23,5 @@ public:
   EntityManager();
   std::shared_ptr<Entity> addEntity(int id, int x, int y);
   void Update();
-  void removeDead(EntityVector &vec);
+  void removeDead();
 };
