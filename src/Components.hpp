@@ -22,4 +22,6 @@ public:
   std::vector<std::pair<int, int>> m_cellsToAdd;
   std::vector<std::pair<int, int>> m_activeCells;
   void updateCellsList(int x, int y);
+  bool checkGridCell(int x, int y, TileMap::cellType type);
+  void setGridCell(int x, int y, TileMap::cellType type);
 };

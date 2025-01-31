@@ -6,7 +6,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include <iostream>
+#include <algorithm>
 #include <memory>
 #include <utility>
 
@@ -65,13 +65,21 @@ void moveCells(EntityMap &entMap, TileMap &tileMap, unsigned int &currentFrame,
   if (currentFrame - lastFrame > 3) {
 
     for (auto cell : tileMap.m_activeCells) {
+      int x = cell.first;
+      int y = cell.second;
+      std::sort(
+          tileMap.m_activeCells.begin(), tileMap.m_activeCells.end(),
+          [](const auto &a, const auto &b) { return a.second > b.second; });
+
+      // MOVE DOWN
       if (cell.second < tileMap.WIDTH - 2 &&
-          tileMap.grid[cell.first][cell.second + 1] == TileMap::EMPTY) {
-        tileMap.grid[cell.first][cell.second] = TileMap::EMPTY;
-        tileMap.grid[cell.first][cell.second + 1] = TileMap::SAND;
+          tileMap.checkGridCell(x, y + 1, TileMap::EMPTY)) {
+        tileMap.setGridCell(x, y, TileMap::EMPTY);
+        tileMap.setGridCell(x, y + 1, TileMap::SAND);
         entMap.erase({cell.first, cell.second});
         tileMap.m_cellsToAdd.push_back(
             std::pair<int, int>(cell.first, cell.second + 1));
+        // MOVE LEFT OR RIGHT
       }
     }
 
@@ -84,8 +92,6 @@ void moveCells(EntityMap &entMap, TileMap &tileMap, unsigned int &currentFrame,
           return tileMap.grid[cell.first][cell.second] == TileMap::EMPTY;
         });
     tileMap.m_activeCells.erase(del, tileMap.m_activeCells.end());
-
-    std::cout << tileMap.m_activeCells.size() << "\n";
     tileMap.m_cellsToAdd.clear();
 
     lastFrame = currentFrame;
