@@ -18,6 +18,7 @@ public:
   static constexpr int WIDTH = 100;
   static constexpr int HEIGHT = 100;
   cellType grid[WIDTH][HEIGHT] = {cellType::EMPTY};
+  bool hasMoved[WIDTH][HEIGHT] = {false};
   TileMap();
   std::vector<std::pair<int, int>> m_cellsToAdd;
   std::vector<std::pair<int, int>> m_activeCells;

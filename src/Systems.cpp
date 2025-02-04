@@ -7,7 +7,9 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <algorithm>
+#include <iostream>
 #include <memory>
+#include <ostream>
 #include <utility>
 
 void renderObjects(sf::RenderWindow &window, EntityMap &entMap) {
@@ -52,7 +54,8 @@ void setCell(sf::RenderWindow &window, sf::Event &event, TileMap &tileMap) {
     int y = static_cast<int>(ycor / cellSize + 0.5f);
 
     if (x >= 0 && x < tileMap.WIDTH && y >= 0 && y < tileMap.WIDTH) {
-      if (tileMap.grid[x][y] == TileMap::EMPTY) {
+      if (tileMap.grid[x][y] == TileMap::EMPTY &&
+          tileMap.grid[x - 1][y - 1] == TileMap::EMPTY) {
         tileMap.grid[x][y] = TileMap::SAND;
         tileMap.updateCellsList(x, y);
       }
@@ -62,24 +65,48 @@ void setCell(sf::RenderWindow &window, sf::Event &event, TileMap &tileMap) {
 
 void moveCells(EntityMap &entMap, TileMap &tileMap, unsigned int &currentFrame,
                unsigned int &lastFrame) {
-  if (currentFrame - lastFrame > 3) {
+  if ((++currentFrame) - lastFrame > 2) {
+
+    std::sort(tileMap.m_activeCells.begin(), tileMap.m_activeCells.end(),
+              [](const auto &a, const auto &b) { return a.second < b.second; });
 
     for (auto cell : tileMap.m_activeCells) {
       int x = cell.first;
       int y = cell.second;
-      std::sort(
-          tileMap.m_activeCells.begin(), tileMap.m_activeCells.end(),
-          [](const auto &a, const auto &b) { return a.second > b.second; });
 
       // MOVE DOWN
       if (cell.second < tileMap.WIDTH - 2 &&
           tileMap.checkGridCell(x, y + 1, TileMap::EMPTY)) {
         tileMap.setGridCell(x, y, TileMap::EMPTY);
         tileMap.setGridCell(x, y + 1, TileMap::SAND);
-        entMap.erase({cell.first, cell.second});
+        entMap.erase({x, y});
         tileMap.m_cellsToAdd.push_back(
             std::pair<int, int>(cell.first, cell.second + 1));
         // MOVE LEFT OR RIGHT
+      } else if (tileMap.checkGridCell(x - 1, y + 1, TileMap::EMPTY) &&
+                 tileMap.checkGridCell(x + 1, y + 1, TileMap::EMPTY) &&
+                 tileMap.checkGridCell(x, y + 1, TileMap::SAND)) {
+        int modifier = (currentFrame % 2 == 0) ? 1 : -1;
+        tileMap.setGridCell(x, y, TileMap::EMPTY);
+        tileMap.setGridCell(x + modifier, y + 1, TileMap::SAND);
+        entMap.erase({x, y});
+        tileMap.m_cellsToAdd.push_back(
+            std::pair<int, int>(x + modifier, y + 1));
+        std::cout << tileMap.m_cellsToAdd.size() << std::endl;
+      } else if (tileMap.checkGridCell(x, y + 1, TileMap::SAND) &&
+                 tileMap.checkGridCell(x - 1, y + 1, TileMap::SAND) &&
+                 tileMap.checkGridCell(x + 1, y + 1, TileMap::EMPTY)) {
+        tileMap.setGridCell(x + 1, y + 1, TileMap::SAND);
+        tileMap.setGridCell(x, y, TileMap::EMPTY);
+        entMap.erase({x, y});
+        tileMap.m_cellsToAdd.push_back(std::pair<int, int>(x + 1, y + 1));
+      } else if (tileMap.checkGridCell(x, y + 1, TileMap::SAND) &&
+                 tileMap.checkGridCell(x + 1, y + 1, TileMap::SAND) &&
+                 tileMap.checkGridCell(x - 1, y + 1, TileMap::EMPTY)) {
+        tileMap.setGridCell(x - 1, y + 1, TileMap::SAND);
+        tileMap.setGridCell(x, y, TileMap::EMPTY);
+        entMap.erase({x, y});
+        tileMap.m_cellsToAdd.push_back(std::pair<int, int>(x - 1, y + 1));
       }
     }
 

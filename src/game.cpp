@@ -4,6 +4,7 @@
 #include "Systems.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <memory>
 const int WIDTH = 1024;
@@ -19,8 +20,6 @@ void Game::run() {
 
   EntityManager manager;
   TileMap tMap;
-  tMap.grid[22][22] = TileMap::SAND;
-  tMap.grid[23][23] = TileMap::SAND;
   while (m_window.isOpen()) {
     sf::Event event;
     drawMap(100, 100, tMap, manager.entMap, manager);
@@ -28,11 +27,15 @@ void Game::run() {
       if (event.type == sf::Event::Closed) {
         m_window.close();
       }
+      if (event.type == sf::Event::KeyPressed &&
+          event.key.code == sf::Keyboard::Space) {
+        ++currentFrame;
+      }
 
       setCell(m_window, event, tMap);
     }
     moveCells(manager.entMap, tMap, currentFrame, lastFrame);
     renderObjects(m_window, manager.entMap);
-    ++currentFrame;
+    //++currentFrame;
   }
 }
