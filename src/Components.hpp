@@ -14,9 +14,9 @@ public:
 
 class TileMap {
 public:
-  enum cellType { EMPTY, SAND };
-  static constexpr int WIDTH = 100;
-  static constexpr int HEIGHT = 100;
+  enum cellType { EMPTY, SAND, WATER, ROCK };
+  static constexpr int WIDTH = 200;
+  static constexpr int HEIGHT = 200;
   cellType grid[WIDTH][HEIGHT] = {cellType::EMPTY};
   bool hasMoved[WIDTH][HEIGHT] = {false};
   TileMap();

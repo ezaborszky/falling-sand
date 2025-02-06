@@ -6,14 +6,16 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <cstdlib>
 #include <memory>
 const int WIDTH = 1024;
 const int HEIGHT = 1024;
 unsigned int currentFrame = 1;
 unsigned int lastFrame = 1;
+TileMap::cellType state;
 Game::Game() {
   m_window.create(sf::VideoMode(WIDTH, HEIGHT), "Sand");
-  m_window.setFramerateLimit(60);
+  m_window.setFramerateLimit(121);
 }
 
 void Game::run() {
@@ -22,7 +24,7 @@ void Game::run() {
   TileMap tMap;
   while (m_window.isOpen()) {
     sf::Event event;
-    drawMap(100, 100, tMap, manager.entMap, manager);
+    drawMap(WIDTH, HEIGHT, tMap, manager.entMap, manager);
     while (m_window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         m_window.close();
@@ -31,8 +33,8 @@ void Game::run() {
           event.key.code == sf::Keyboard::Space) {
         ++currentFrame;
       }
-
-      setCell(m_window, event, tMap);
+      setState(event, state);
+      setCell(m_window, event, tMap, state, manager.entMap);
     }
     moveCells(manager.entMap, tMap, currentFrame, lastFrame);
     renderObjects(m_window, manager.entMap);
